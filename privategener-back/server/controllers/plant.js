@@ -1,26 +1,5 @@
 const Plant = require('../models/Plant.js')
 
-exports.postPlant = async(req, res) => {
-    const plantData = new Plant({
-        ...req.body
-    })
-    plantData.save((err, plant) => {
-
-    if(plantData.plantid.length <=6){
-        res.status(200).json({
-            ok: true,
-            plant
-        })
-    } else {
-        res.status(400).json({
-            ok: false,
-            msg: "No puedes cargar mas de 6 plantas"
-        });
-    }
-    });
-    
-};
-
 exports.getPlants = async(req, res) => {
 
     try {
@@ -38,9 +17,10 @@ exports.getPlants = async(req, res) => {
 };
 
 exports.getPlantById = async(req, res) => {
-    const idPlant = req.params.id
+    const uidDonor = req.params.id
     try {
-        const results = await Plant.findOne({discord: idPlant}).exec();
+        const results = await Plant.find({uid: uidDonor}).exec();
+        console.log(results);
         res.status(200).json(
             results
         )
@@ -52,24 +32,13 @@ exports.getPlantById = async(req, res) => {
     }
 };
 
-// exports.getPlantById2 = async(req, res) => {
-//     const idPlant = req.params.id
-//     try {
-//         const results = await Plant.findOne({discord: idPlant, account: 2 }).exec();
-//         res.status(200).json(
-//             results
-//         )
-//     } catch (error) {
-//         res.status(400).json({
-//             ok: false,
-//             msg: error
-//         })
-//     }
-// };
-
 exports.updatePlant = async(req, res) => {
+    const query = {uid: req.params.id}
+    const update = {$set: {...req.body }}
+    const options = {upsert: true}
     try {
-        const updated = await Plant.findOneAndUpdate({discord: req.params.id}, req.body);
+        const updated = await Plant.updateOne(query, update, options);
+        console.log(updated);
         res.json({
             updated,
         });
@@ -82,8 +51,9 @@ exports.updatePlant = async(req, res) => {
 };
 
 exports.getPlantsCount = async(req, res) => {
+    const uidDonor = req.params.id
     try{
-        const totalPlants = await Plant.countDocuments();
+        const totalPlants = await Plant.countDocuments({uid: uidDonor});
 
         res.json({
             totalPlants
@@ -98,17 +68,17 @@ exports.getPlantsCount = async(req, res) => {
 };
 
 exports.deletePlant = async(req, res) => {
-    const idDiscord = req.params.id
+    const uidDonor = req.params.id
     try{
-        await Plant.deleteOne({discord: idDiscord});
+        await Plant.deleteOne({uid: uidDonor});
         res.status(200).json({
-            msg: `Las plantas con Discord ID:${idDiscord} fueron eliminadas`,
+            msg: `Las plantas con ID:${uidDonor} fueron eliminadas`,
 
         });
     }catch(err){
         res.status(400).json({
             error: err,
-            msg:`Las plantas con Discord ID:${idDiscord} no pudieron ser eliminadas`
+            msg:`Las plantas con ID:${uidDonor} no pudieron ser eliminadas`
         })
     }
 }

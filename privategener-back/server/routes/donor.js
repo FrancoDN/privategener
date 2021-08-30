@@ -9,6 +9,8 @@ app.post('/newDonor', donorController.postDonor);
 app.get('/donors', donorController.getDonors);
 // Encuentro donador por ID
 app.get('/donor/:id', donorController.getDonorById);
+
+app.get('/license/:id', donorController.getDonorLincese);
 // Actualizo a un donador
 app.put('/donor/:id', donorController.updateDonor);
 // Obtengo los donadores de la BD

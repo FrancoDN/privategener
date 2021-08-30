@@ -4,7 +4,7 @@ import mongoosePaginate from 'mongoose-paginate-v2'
 let Schema = mongoose.Schema;
 
 const plantSchema = new Schema({
-  discord: { type: String},
+  uid: {type: String},
   grupo: {type: Number},
   plantid: { type: Array},
   account: {type: Number}

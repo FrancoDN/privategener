@@ -3,18 +3,14 @@ const express = require('express');
 const app = express();
 
 
-// Crear donador
-app.post('/newPlant', plantController.postPlant);
-// Obtengo todas las plantas
+// Obtengo todas las cuentas de la BD
 app.get('/plants', plantController.getPlants);
-// Encuentro planta por ID
-app.get('/plant/:id', plantController.getPlantById);
-
-// app.get('/plant2/:id', plantController.getPlantById2);
-// Actualizo a una planta
-app.put('/plant/:id', plantController.updatePlant);
+// Encuentro account/s por user id
+app.get('/accounts/:id', plantController.getPlantById);
+// Actualizo a una cuenta o la creo si no existe
+app.put('/account/:id', plantController.updatePlant);
 // Obtengo cantidad de plantas en la BD
-app.get('/donorsCount', plantController.getPlantsCount)
+app.get('/plantCount/:id', plantController.getPlantsCount)
 // Elimino a una planta
 app.delete('/deletePlant/:id', plantController.deletePlant)
 

@@ -6,7 +6,7 @@ const donorSchema = new Schema({
   discord: { type: String},
   uid: { type: String},
   active: { type: Boolean, default: true },
-  license: {type: Boolean, default: false}
+  license: {type: Number}
 },
   {
     versionKey: false,

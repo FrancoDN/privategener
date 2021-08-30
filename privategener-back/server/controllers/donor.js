@@ -50,6 +50,21 @@ exports.getDonorById = async(req, res) => {
     }
 };
 
+exports.getDonorLincese = async(req, res) => {
+    const idDonor = req.params.id
+    try {
+        const results = await Donor.findOne({uid: idDonor}).exec();
+        res.status(200).json(
+            results.license
+        )
+    } catch (error) {
+        res.status(400).json({
+            ok: false,
+            msg: error
+        })
+    }
+};
+
 exports.updateDonor = async(req, res) => {
     try {
         const updated = await Donor.findByIdAndUpdate(req.params.id, req.body);

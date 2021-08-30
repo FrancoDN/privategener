@@ -47,17 +47,27 @@
       <div class="w-full" v-if="arrPlants.length < 6" >
         <button class="bg-green-500 text-white font-bold w-full m-0 px-4 py-2" @click="show()">Add Plant</button>
       </div>
-
+  
 
     </div>
-    
+    <ModalForm
+        v-show="isModalVisible"
+        hideClose="true"
+        classModal="modal w-1/2 h-1"
+    >
+
+    <template v-slot:body>
+      <div class="h-auto flex flex-col items-center justify-center py-6">
+      <div class="px-6 py-4">
+          <h3 v-if="titleNewPlant">Add New Plant</h3>
+          <h3 v-if="titleEditGroup">Edit Group</h3>
 
 
-      <modal name="add-plant-modal" :width="300" :height="212">
-        <div class="px-6 py-4">
-          <h3>Add New Plant</h3>
-
-          <div class="block my-4">
+          <div class="block my-4" v-if="initialPlantModal">
+                    <label for="groupId" class="block text-gray-400 text-sm">Group</label>
+                    <input v-model="strGroupId" id="groupId" type="text" class="w-full h-10 py-2 px-2 border-2 border-gray-300 rounded-md">
+          </div>
+          <div class="block my-4" v-if="addPlantModal">
                     <label for="plantIdAdd" class="block text-gray-400 text-sm">Plant ID</label>
                     <input v-model="strPlantId" id="plantIdAdd" type="text" class="w-full h-10 py-2 px-2 border-2 border-gray-300 rounded-md">
           </div>
@@ -66,9 +76,11 @@
         <div class="flex justify-center mt-6">
           <button class="bg-green-500 text-white font-bold w-full m-0 px-4 py-2" @click="AddPlantsInArr()">Add Plant</button>
         </div>
-    </modal>
+        </div>
+    </template>
 
-
+    </ModalForm>
+      <!-- 
     <modal name="initial-plant-modal" :width="300" :height="288">
         <div class="px-6 py-4">
           <h3>Add New Plant</h3>
@@ -90,19 +102,8 @@
 
 
    <modal name="change-group-modal" :width="300" :height="212">
-        <div class="px-6 py-4">
-          <h3>Change group</h3>
-
-          <div class="block my-4">
-                    <label for="modifyGroupId" class="block text-gray-400 text-sm">Group</label>
-                    <input v-model="strGroupId" id="modifyGroupId" type="text" class="w-full h-10 py-2 px-2 border-2 border-gray-300 rounded-md">
-          </div>
-                
-        </div>
-        <div class="flex justify-center mt-6">
-          <button class="bg-green-500 text-white font-bold w-full m-0 px-4 py-2" @click="modifyGroup()">Modify group</button>
-        </div>
-    </modal>
+        
+    </modal> -->
 
 
   </div>
@@ -110,9 +111,11 @@
 
 <script>
 import plantServices from '../services/plant.services.js'
+import ModalForm from '../components/ModalForm.vue'
 export default {
   name: 'Account',
   components: {
+    ModalForm
   },
   props: ['account'],
   
@@ -125,6 +128,11 @@ export default {
       localStorageUser: '',
       numAccount: 0,
       accountSelected: null,
+      isModalVisible: false,
+      addPlantModal: false,
+      initialPlantModal: false,
+      titleNewPlant: false,
+      titleEditGroup: false
     }
   },
   
@@ -229,14 +237,26 @@ export default {
         // Aux
         show() {
           this.strPlantId = '';
-          (this.arrPlants.length > 0) ? this.$modal.show('add-plant-modal') : this.$modal.show('initial-plant-modal');
-          this.accountSelected = this.account.account;
-          console.log(this.account.account)
-            return this.account.account
+          if(this.arrPlants.length > 0) {
+            this.titleNewPlant = true
+            this.titleEditGroup = false
+            this.addPlantModal = true
+            this.initialPlantModal = false
+          } else {
+            this.titleNewPlant = true
+            this.titleEditGroup = false
+            this.initialPlantModal = true
+            this.addPlantModal = true
+          }
+          this.isModalVisible = true
         },
 
         group() {
-        this.$modal.show('change-group-modal');
+          this.isModalVisible = true
+          this.titleEditGroup = true
+          this.titleNewPlant = false
+          this.addPlantModal = false;
+          this.initialPlantModal = true;
 
         },
 

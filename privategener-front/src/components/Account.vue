@@ -153,9 +153,9 @@ export default {
             
             try {
               const saveBD = await this.addPlantInBD(this.arrPlants);
-              this.closeAllModals();
+              this.isModalVisible = false
             } catch (error) {
-              this.closeAllModals();
+              this.isModalVisible = false
               this.printErrors();
             }
 
@@ -167,18 +167,19 @@ export default {
             plantid: Object.values(arrPlants),
             grupo: this.strGroupId,
             uid: this.localStorageUser,
-            account: this.accountSelected
+            account: this.account.account
           };
 
           console.log(plant)
 
-        //   try {
-        //     const update = await plantServices.updateAccounts(plant);
-        //     this.printSuccess()
-        //     return update;
-        //   } catch (error) {
-        //     this.printErrors();
-        //   }
+          try {
+            const update = await plantServices.updateAccounts(plant);
+            this.printSuccess()
+            
+            return update;
+          } catch (error) {
+            this.printErrors();
+          }
         },
 
         openModalEdit(index) {

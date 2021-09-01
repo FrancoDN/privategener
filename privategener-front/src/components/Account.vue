@@ -7,7 +7,7 @@
         <div>
           <h4 class="text-blue-400 bold uppercase mt-3">
             Group:  <span class="text-gray-600 md:ml-3"> {{strGroupId}} </span> 
-            <button class="bg-yellow-600 text-white font-bold w-15 m-0 px-2 py-1 mt-3 ml-4 rounded-md text-xs" @click="group()">
+            <button v-if="!isEditGroup" class="bg-yellow-600 text-white font-bold w-15 m-0 px-2 py-1 mt-3 ml-4 rounded-md text-xs" @click="showFormEditGroup()">
               <i class="fas fa-edit text-white text-xs"></i>
               Edit
               </button>
@@ -16,10 +16,22 @@
           
         </div>
         </div>
+
+        <div class="bg-gray-100 text-center mt-0" v-if="isEditGroup">
+        <h4>Edit Group</h4>
+        <div class="block mb-2">
+              <input v-model="strGroupId" id="plantIdAdd" type="text" class="w-full h-8 py-2 px-2 border-2 border-gray-300 rounded-md text-sm">
+          </div>
+        <div class="w-full">
+          <button class="bg-yellow-600 text-white font-bold w-full m-0 px-2 py-1" @click="modifyGroup()">Save</button>
+        </div>
+  
+      </div>
+
         
       </div>
 
-        <ul class="px-6 py-8">
+        <ul class="px-6 pt-8 pb-4">
           <li class="text-gray-400">
             PlantId
           </li>
@@ -29,12 +41,12 @@
             <i class="fas fa-seedling mr-2 text-green-700"></i>
             {{plant}}
             </span>
-            <span class="w-2/6 text-right mb-4" style="font-size: 16px;">
-              <span @click="openModalEdit(index)"> 
+            <span class="w-2/6 text-right mb-4" style="font-size: 16px;" v-if="!isEditGroup && !isEditPlant">
+              <span @click="showFormEditPlant(index)"> 
                 <i class="fas fa-edit mr-4 text-yellow-500"></i>
               </span>
             
-              <span @click="deletePlant(index)">
+              <span @click="deletePlant(index)" v-if="!isEditGroup || !isEditPlant">
                 <i class="far fa-trash-alt mr-1 text-red-500"></i>
               </span>
 
@@ -42,15 +54,48 @@
           </li>
         </ul>
     </div>
+    
     </div>
+    <div class="bg-gray-100 text-center mt-0" v-if="isAddPlant">
+        <h4>Add New Plant</h4>
+        <div class="block mb-2">
+                    <label for="plantIdAdd" class="block text-gray-400 text-sm">Plant ID</label>
+                    <input v-model="strPlantId" id="plantIdAdd" type="text" class="w-full h-10 py-2 px-2 border-2 border-gray-300 rounded-md">
+          </div>
+        <div class="w-full">
+          <button class="bg-blue-500 text-white font-bold w-full m-0 px-4 py-2" @click="savePlantInBd()">Save Plant</button>
+        </div>
+  
+      </div>
+
+      <div class="bg-gray-100 text-center mt-0" v-if="isEditPlant">
+        <h4>Edit Plant</h4>
+        <div class="block mb-2">
+                    <label for="plantIdAdd" class="block text-gray-400 text-sm">Plant ID</label>
+                    <input v-model="strPlantId" id="plantIdAdd" type="text" class="w-full h-10 py-2 px-2 border-2 border-gray-300 rounded-md">
+          </div>
+        <div class="w-full">
+          <button class="bg-blue-500 text-white font-bold w-full m-0 px-4 py-2" @click="savePlantInBd()">Save Plant</button>
+        </div>
+  
+      </div>
+
+    
     <div class="flex justify-center bounce-in-bottom">
-      <div class="w-full" v-if="arrPlants.length < 6" >
-        <button class="bg-green-500 text-white font-bold w-full m-0 px-4 py-2" @click="show()">Add Plant</button>
+      
+      <div class="w-full" v-if="arrPlants.length < 6 && !isAddPlant && !isEditPlant" >
+        <button class="bg-green-500 text-white font-bold w-full m-0 px-4 py-2" @click="showFormAddPlant(plant)">Add Plant</button>
       </div>
   
-
+      
     </div>
-    <ModalForm
+    
+    
+    
+    
+    
+    
+    <!-- <ModalForm
         v-show="isModalVisible"
         hideClose="true"
         classModal="modal w-1/2 h-1"
@@ -80,7 +125,7 @@
     </template>
 
     </ModalForm>
-      <!-- 
+      
     <modal name="initial-plant-modal" :width="300" :height="288">
         <div class="px-6 py-4">
           <h3>Add New Plant</h3>
@@ -132,7 +177,13 @@ export default {
       addPlantModal: false,
       initialPlantModal: false,
       titleNewPlant: false,
-      titleEditGroup: false
+      titleEditGroup: false,
+
+
+      //
+      isAddPlant: false,
+      isEditPlant: false,
+      isEditGroup: false,
     }
   },
   
@@ -145,18 +196,38 @@ export default {
   },
 
   methods: {
-        async AddPlantsInArr() {
+
+        showFormEditPlant(index) {
+          this.strPlantId = this.arrPlants[index];
+          this.arrPlants.splice(index,1);
+          this.isEditPlant = true;
+        },
+
+        showFormAddPlant(plant){
+          this.strPlantId = (plant) ? plant : '';
+          this.isAddPlant = true;
+          console.log(this.account.account);
+        },
+
+        showFormEditGroup(){
+          this.isEditGroup = true;
+        },
+
+        async savePlantInBd() {
 
           if(this.strPlantId) {
             this.arrPlants.push(this.strPlantId);
-            this.strPlantId = '';
             
             try {
               const saveBD = await this.addPlantInBD(this.arrPlants);
-              this.isModalVisible = false
+              this.isAddPlant = false;
+              this.isEditPlant = false;
+              this.strPlantId = '';
             } catch (error) {
-              this.isModalVisible = false
+              this.isAddPlant = false;
+              this.isEditPlant = false;
               this.printErrors();
+              this.strPlantId = '';
             }
 
           }
@@ -195,7 +266,7 @@ export default {
             plantid: Object.values(this.arrPlants),
             grupo: this.strGroupId,
             uid: this.localStorageUser,
-            account: 1
+            account: this.account.account
           };
 
           try {
@@ -213,7 +284,7 @@ export default {
             plantid: Object.values(this.arrPlants),
             grupo: this.strGroupId,
             uid: this.localStorageUser,
-            account: 1
+            account: this.account.account
           };
 
           try {
@@ -225,12 +296,6 @@ export default {
             this.closeAllModals();
             this.printErrors();
           }
-        },
-
-        
-        
-        addAccount() {
-          
         },
 
         search() {},
@@ -274,7 +339,7 @@ export default {
 
         printErrors() {
           this.$toast.open({
-            message: 'Ups! Something went wrong.',
+            message: 'Oops! Something went wrong.',
             type: 'error',
           });
         },

@@ -3,7 +3,7 @@
     <div class="container px-4 mx-auto flex flex-wrap items-center justify-between">
       <div class="w-full relative flex justify-between lg:w-auto  px-4 lg:static lg:block lg:justify-start">
         <a class="text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase text-white">
-          PrivateGener
+          <img src="../assets/pvu.png" alt="" class="h-8 w-20" >
         </a>
         <button class="text-white cursor-pointer text-xl leading-none px-3 py-1 border border-solid border-transparent rounded bg-transparent block lg:hidden outline-none focus:outline-none" type="button" v-on:click="toggleNavbar()">
           <i class="fas fa-bars"></i>
@@ -13,7 +13,7 @@
         <ul class="flex flex-col lg:flex-row list-none ml-auto">
           <li class="nav-item">
             <a class="px-3 py-2 flex items-center text-xs uppercase font-bold leading-snug text-white hover:opacity-75">
-              <i class="fas fa-user-plus text-lg leading-lg text-white opacity-75"/><span class="ml-2">Add Account</span>
+              <i class="fas fa-user-plus text-lg leading-lg text-white opacity-75"/><span class="ml-2" @click="addAccount()">Add Account</span>
             </a>
           </li>
           
@@ -42,7 +42,8 @@ export default {
     props: ['cantAccount','numAccountMax'],
     data() {
         return {
-            showMenu: false
+            showMenu: false,
+            addAccountValue: false,
         }
     },
     mounted() {
@@ -54,7 +55,8 @@ export default {
         },
 
         addAccount() {
-
+          this.addAccountValue = true;
+          this.$emit('plusAccount', this.addAccountValue)
         },
 
         logOut() {

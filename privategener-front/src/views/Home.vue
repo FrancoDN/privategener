@@ -2,10 +2,10 @@
   <div class="" v-if="!isLoading">
     
     
-    <NavBar :cantAccount="cantAccounts" :numAccountMax="cantLicenses" />
+    <NavBar :cantAccount="cantAccounts" :numAccountMax="cantLicenses" @plusAccount='addAccount' />
     
     <div class="flex justify-center bounce-in-bottom grid lg:grid-cols-4 md:grid-cols-3 md:grid-cols-2">
-      <div v-for="account in arrAccounts" :key="account.account" class="mx-2 my-4">
+      <div v-for="(account, index) in arrAccounts" :key="index" class="mx-2 my-4">
         <Account :account="account" />
       </div>
     </div>
@@ -15,8 +15,6 @@
 <script>
 import NavBar from '@/components/NavBar.vue'
 import Account from '@/components/Account.vue'
-
-import plantServices from '../services/plant.services.js'
 import donorServices from '../services/donor.services.js'
 import {AtomSpinner} from 'epic-spinners'
 
@@ -27,6 +25,8 @@ export default {
     Account,
     AtomSpinner
   },
+  props: ['account'],
+
   data() {
     return {
       strPlantId: '',
@@ -36,6 +36,11 @@ export default {
       cantAccounts: 0,
       cantLicenses: 1,
       isLoading: true,
+      initData: {
+        grupo: null,
+        plantid: [],
+        account: 0
+      }
     }
   },
   
@@ -72,7 +77,25 @@ export default {
           }
         },
 
-        addAccount() {},
+        addAccount(data) {
+          console.log('Largo cuentas', this.arrAccounts.length);
+          console.log('Cantidad licensias', this.cantLicenses);
+
+          if(this.arrAccounts.length < this.cantLicenses) {
+          this.initData.account = this.arrAccounts.length + 1
+          this.arrAccounts.push(this.initData)
+          } else {
+            this.printErrors();
+            this.initData.account = null
+          }
+        },
+        
+        printErrors() {
+          this.$toast.open({
+            message: "Oops! you can't create more accounts",
+            type: 'error',
+          });
+        },
   },
 }
 </script>

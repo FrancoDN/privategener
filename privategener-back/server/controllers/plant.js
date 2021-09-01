@@ -33,7 +33,7 @@ exports.getPlantById = async(req, res) => {
 };
 
 exports.updatePlant = async(req, res) => {
-    const query = {uid: req.params.id}
+    const query = {uid: req.params.id, account: req.body.account}
     const update = {$set: {...req.body }}
     const options = {upsert: true}
     try {
